@@ -54,3 +54,7 @@ class Fitter(torch.nn.Module):
         return y
 
 ```
+
+# Different optimizers
+
+![Optimiser_Compare.png](Optimiser_Compare.png)
