@@ -28,8 +28,8 @@ class Fitter(torch.nn.Module):
         self.fully_connected_1 = torch.nn.Linear(in_features=1, out_features=numHiddenNodes)
         self.fully_connected_2 = torch.nn.Linear(in_features=numHiddenNodes, out_features=1)
 
-    def forward(self, x, activationFn):
-        h = activationFn(self.fully_connected_1(x))
+    def forward(self, x, activation_Function):
+        h = activation_Function(self.fully_connected_1(x))
         # Linear activation function used on the outer layer
         y = self.fully_connected_2(h)
         return y

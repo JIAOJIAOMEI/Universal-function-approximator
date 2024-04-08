@@ -40,9 +40,9 @@ class Fitter(torch.nn.Module):
         self.fully_connected_1 = torch.nn.Linear(in_features=2, out_features=numHiddenNodes)
         self.fully_connected_2 = torch.nn.Linear(in_features=numHiddenNodes, out_features=1)
 
-    def forward(self, x, activationFn):
+    def forward(self, x, activation_Function):
         first_layer_output = self.fully_connected_1(fourier_feature_mappping_function(x))
-        first_layer_output = activationFn(first_layer_output)
+        first_layer_output = activation_Function(first_layer_output)
         y = self.fully_connected_2(first_layer_output)
         return y
 
