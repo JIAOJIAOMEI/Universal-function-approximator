@@ -4,14 +4,9 @@
 # @File    : FunctionApproximation.py
 
 
-import jax.numpy as np
-from jax import jit, grad, random
-from jax.example_libraries import stax, optimizers
-
 import matplotlib.pyplot as plt
-from tqdm.notebook import tqdm
-import os, imageio
 import torch
+from jax import random
 
 rand_key = random.PRNGKey(0)
 
