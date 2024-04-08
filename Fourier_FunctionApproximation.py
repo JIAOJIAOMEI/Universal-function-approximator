@@ -90,5 +90,5 @@ for i, activationFn in enumerate(activationFn_list):
         axs[i, j].plot(x, y_Out, 'r.', label='Neural Network Output')
         axs[i, j].set_title(f'{activationFn.__name__} Activation Function, {numEpochs} Epochs', fontsize=16)
         axs[i, j].legend(loc='upper left', fontsize=13)
-plt.savefig('Fourier_FunctionApproximation.pdf', dpi=300, bbox_inches='tight', pad_inches=0.1)
+plt.savefig('Fourier_FunctionApproximation.png', dpi=300, bbox_inches='tight', pad_inches=0.1)
 plt.show()
