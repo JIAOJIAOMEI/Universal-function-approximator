@@ -58,3 +58,29 @@ class Fitter(torch.nn.Module):
 # Different optimizers
 
 ![Optimiser_Compare.png](Optimiser_Compare.png)
+
+# Solving ODEs with PINNs Example
+
+The idea is based on this paper [Artificial Neural Networks for Solving ODEs and PDES](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/1998-Artificial%20Neural%20Networks%20for%20Solving%20ODEs%20and%20PDES.pdf),
+the code implementation is based on this [Neural Networks for Solving Differential Equations](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/main%20reference%20for%20this%20project.pdf), I made some modifications.
+
+
+$$
+\begin{equation}
+\frac{d f(x)}{d x}=x^3+2 x+x^2 \frac{1+3 x^2}{1+x+x^3}-\left(x+\frac{1+3 x^2}{1+x+x^3}\right) f(x)
+\end{equation}
+$$
+
+
+for $x \in[0,2]$, with $f(0)=1$.
+
+The true solution is 
+
+
+$$
+\begin{equation}
+f(x)=\frac{e^{-\frac{x^2}{2}}}{1+x+x^3}+x^2
+\end{equation}
+$$
+
+
