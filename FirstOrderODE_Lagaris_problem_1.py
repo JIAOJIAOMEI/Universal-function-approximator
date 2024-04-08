@@ -113,7 +113,7 @@ x_range = [0, 2]
 num_samples = 100
 batch_size = 20
 learning_rate = 1e-3
-num_epochs = 100
+num_epochs = 50
 num_hidden_nodes = 10
 
 network = Fitter(numHiddenNodes=num_hidden_nodes)
@@ -142,7 +142,7 @@ for i, activationFn in enumerate(activationFn_list):
 
     axs[i, 0].plot(x, y_Exact, 'b.', label='Exact')
     axs[i, 0].plot(x, final_output(x, y_Out), 'r.', label='Approx')
-    axs[i, 0].set_title(f'Activation Function: {activationFn.__name__}, Fitter,{num_epochs} Epochs')
+    axs[i, 0].set_title(f'Activation Function: {activationFn.__name__}, Neural Fitter,{num_epochs} Epochs')
     axs[i, 0].legend()
 
     cost_List = train(Fourier_network, loader, lossFn, optimiser_Fourier_network, num_epochs, activationFn)
@@ -156,5 +156,6 @@ for i, activationFn in enumerate(activationFn_list):
     axs[i, 1].set_title(f'Activation Function: {activationFn.__name__}, Fourier Fitter,{num_epochs} Epochs')
     axs[i, 1].legend()
 
+plt.savefig('FirstOrderODE_Lagaris_problem_1.png', dpi=300, bbox_inches='tight', pad_inches=0.1)
 plt.savefig('FirstOrderODE_Lagaris_problem_1.pdf', dpi=300, bbox_inches='tight', pad_inches=0.1)
 plt.show()
