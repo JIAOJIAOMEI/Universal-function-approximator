@@ -1,12 +1,8 @@
 [TOC]
 
-
-
-
-
 # Universal function approximator
 
-Neural networks are universal function approximators. 
+Neural networks are universal function approximators.
 Given enough neurons and layers, a neural network can approximate **any** function.
 (I don't really believe this, but I agree that neural networks are very powerful function approximators.)
 If you are interested in the proof, you can read the paper [Multilayer feedforward networks are universal approximators](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/1989-Multilayer%20feedforward%20networks%20are%20universal%20approximators.pdf).
@@ -79,11 +75,9 @@ $$
 \end{equation}
 $$
 
-
 for $x \in[0,2]$, with $f(0)=1$.
 
-The true solution is 
-
+The true solution is
 
 $$
 \begin{equation}
@@ -97,35 +91,68 @@ I compared normal networks and fourier networks, the results are shown below.
 
 I will explain the idea; it is very, very simple.
 
-You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g(x) = f(a) + (x-a) N(x,\theta)$ to approximate $f(x)$, where $N(x,\theta)$ is the neural network. It would be easier to understand why $g(x) = f(a) + (x-a) N(x,\theta)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial.
+You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g(x) = f(a) + (x-a) N(x)$ to approximate $f(x)$, where $N(x)$ is the neural network. It would be easier to understand why $g(x) = f(a) + (x-a) N(x)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial or taylor series.
 
-Now, in this case, we have $g(x) = 1 + x N(x,\theta)$.
+Now, in this case, we have $g(x) = 1 + x N(x)$.
 
-Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$​. Hence, the loss function is 
-
+Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
 
 $$
 L = \sum_{i=1}^{n} (g\prime(x_i) - f\prime(x_i))^2
 $$
 
-
 where $x_i$ is the point in the interval $[a,b]$.
 
 Basically, we don't get what we want, so we need to set a tolerance for the loss function. If the loss function is smaller than the tolerance, we stop training the neural network.
 
-In our case, $g\prime(x) = N(x,\theta) + x N\prime(x,\theta)$
+In our case, $g\prime(x) = N(x) + x N\prime(x)$
 
-so the loss function is 
-
+so the loss function is
 
 $$
-L = \sum_{i=1}^{n} (N(x_i,\theta) + x_i N\prime(x_i,\theta) - f\prime(x_i))^2
+L = \sum_{i=1}^{n} (N(x_i) + x_i N\prime(x_i) - f\prime(x_i))^2
 $$
-
 
 I think that is all.
 
-One more thing,the final output is not the output of the neural network, but the output of $g(x) = f(a) + (x-a) N(x,\theta) $.
+One more thing,the final output is not the output of the neural network, but the output of $g(x) = f(a) + (x-a) N(x) $.
 
 # Solving second order ODEs with PINNs Example
 
+Similarly, you want to find out $f(x)$, but you only have $f\prime\prime(x)$ and boundary conditions $f(a) = A$ and $f\prime(a) = A\prime$ and the interval $[a,b]$. We can use
+
+$$
+g(x) = A + A\prime (x-a) + (x-a)^2 N(x)
+$$
+
+to approximate $f(x)$, where $N(x)$ is the neural network.
+
+**Can't you see it ? $g(x) = A + A\prime (x-a) + (x-a)^2 N(x)$ is the first 2 terms of the taylor series of $f(x)$ at $x=a$.**
+
+The Taylor series of a real or complex-valued function $f(x)$, that is infinitely differentiable at a real or complex number $a$, is the power series
+
+$$
+f(a)+\frac{f^{\prime}(a)}{1 !}(x-a)+\frac{f^{\prime \prime}(a)}{2 !}(x-a)^2+\frac{f^{\prime \prime \prime}(a)}{3 !}(x-a)^3+\cdots=\sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n !}(x-a)^n
+$$
+
+where $f^{(n)}(a)$ denotes the $n$-th derivative of $f$ evaluated at the point $a$, and $n!$ denotes the factorial of $n$.
+
+Since we use $g(x)$ to approximate $f(x)$, it means that we want $g\prime\prime(x) - f\prime\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
+
+$$
+L = \sum_{i=1}^{n} (g\prime\prime(x_i) - f\prime\prime(x_i))^2
+$$
+
+where $x_i$ is the point in the interval $[a,b]$.
+
+we have 
+
+$$
+g\prime(x) = A\prime + 2 (x-a) N(x) + (x-a)^2 N\prime(x)
+$$
+
+$$
+g\prime\prime(x) = 2 N(x) + 4 (x-a) N\prime(x) + (x-a)^2 N\prime\prime(x)
+$$
+
+I think this is all for this case.
