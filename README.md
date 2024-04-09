@@ -106,7 +106,7 @@ where $x_i$ is the point in the interval $[a,b]$.
 
 Basically, we don't get what we want, so we need to set a tolerance for the loss function. If the loss function is smaller than the tolerance, we stop training the neural network.
 
-In out case, $g\prime(x) = N(x,\theta) + x N\prime(x,\theta)$
+In our case, $g\prime(x) = N(x,\theta) + x N\prime(x,\theta)$
 
 so the loss function is 
 
