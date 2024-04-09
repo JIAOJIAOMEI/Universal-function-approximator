@@ -64,6 +64,7 @@ class Fitter(torch.nn.Module):
 The idea is based on this paper [Artificial Neural Networks for Solving ODEs and PDES](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/1998-Artificial%20Neural%20Networks%20for%20Solving%20ODEs%20and%20PDES.pdf),
 the code implementation is based on this [Neural Networks for Solving Differential Equations](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/main%20reference%20for%20this%20project.pdf), I made some modifications.
 
+To solve:
 
 $$
 \begin{equation}
@@ -87,4 +88,17 @@ I compared normal networks and fourier networks, the results are shown below.
 
 ![FirstOrderODE_Lagaris_problem_1.png](FirstOrderODE_Lagaris_problem_1.png)
 
+I will explain the idea; it is very, very simple.
 
+You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g(x) = f(a) + (x-a) N(x,\theta) $ to approximate $f(x)$, where $N(x,\theta)$ is the neural network. It would be easier to understand why $g(x) = f(a) + (x-a) N(x,\theta) $ can approximate $f(x)$​ if you know the interpolation method by using the Lagrange polynomial.
+
+Now, in this case, we have $g(x) = 1 + x N(x,\theta) $​.
+
+Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is $L = \sum_{i=1}^{n} (g\prime(x_i) - f\prime(x_i))^2$.
+Basically, we don't get what we want, so we need to set a tolerance for the loss function. If the loss function is smaller than the tolerance, we stop training the neural network.
+
+$g\prime(x) = N(x,\theta) + x N\prime(x,\theta)$
+
+so the loss function is $L = \sum_{i=1}^{n} (N(x_i,\theta) + x_i N\prime(x_i,\theta) - f\prime(x_i))^2$. I think that is all.
+
+One more thing,the final output is not the output of the neural network, but the output of $g(x) = f(a) + (x-a) N(x,\theta) $.
