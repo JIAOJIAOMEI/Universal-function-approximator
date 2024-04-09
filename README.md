@@ -178,3 +178,13 @@ g\prime\prime(x) = -2 N(x) + 2 (a+b-2x) N\prime(x) + (x-a)(b-x) N\prime\prime(x)
 $$
 
 that is all.
+
+I implemented an example here, this one is trying to solve:
+
+$$
+f^{\prime \prime}(x) = -\frac{1}{5} f\prime(x) - f(x) - \frac{1}{5} e^{-\frac{x}{5}} \cos(x)
+$$
+
+with exact solution $f(x) = e^{-\frac{x}{5}} \sin(x)$, $x \in [0, 10]$, $f(0) = 0$, $f\prime(0) = 1$.
+
+![SecondOrderODE_Lagaris_problem_3.png](SecondOrderODE_Lagaris_problem_3.png)
