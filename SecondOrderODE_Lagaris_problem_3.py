@@ -1,7 +1,7 @@
 # @Author  : Mei Jiaojiao
 # @Time    : 2024/4/8 13:18
 # @Software: PyCharm
-# @File    : FirstOrderODE_Lagaris_problem_3.py
+# @File    : SecondOrderODE_Lagaris_problem_3.py
 
 
 import matplotlib.pyplot as plt
