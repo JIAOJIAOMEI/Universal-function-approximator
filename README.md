@@ -156,3 +156,23 @@ g\prime\prime(x) = 2 N(x) + 4 (x-a) N\prime(x) + (x-a)^2 N\prime\prime(x)
 $$
 
 I think this is all for this case.
+
+In another case, we have different boundary conditions, suppose that we have $f(a) = A$ and $f(b) = B$ and the interval $[a,b]$. We can use
+
+$$
+g(x) = A \frac{b-x}{b-a} + B \frac{x-a}{b-a} + (x-a)(b-x) N(x)
+$$
+
+to approximate $f(x)$, where $N(x)$ is the neural network. It makes sure that when $x=a$, $g(x) = A$ and when $x=b$, $g(x) = B$.
+
+The derivative of $g(x)$ is more complicated, but the idea is the same. In this case, first derivative is
+
+$$
+g\prime(x) = \frac{B-A}{b-a} + (a+b-2x) N(x) + (x-a)(b-x) N\prime(x)
+$$
+
+and the second derivative is
+
+$$
+g\prime\prime(x) = -2 N(x) + 2 (a+b-2x) N\prime(x) + (x-a)(b-x) N\prime\prime(x)
+$$
