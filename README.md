@@ -176,3 +176,5 @@ and the second derivative is
 $$
 g\prime\prime(x) = -2 N(x) + 2 (a+b-2x) N\prime(x) + (x-a)(b-x) N\prime\prime(x)
 $$
+
+that is all.
