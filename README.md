@@ -1,8 +1,8 @@
-[Universal function approximator]: # Universal-function-approximator
-[Fourier feature mapping]: # Fourier-feature-mapping
-[Different optimizers]: # Different-optimizers
-[Solving first order ODEs with PINNs Example]: #Solving-first-order-ODEs-with-PINNs-Example
-[Solving second order ODEs with PINNs Example]: #Solving-second-order-ODEs-with-PINNs-Example
+[Universal function approximator](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#universal-function-approximator)
+[Fourier feature mapping](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#fourier-feature-mapping)
+[Different optimizers](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#different-optimizers)
+[Solving first order ODEs with PINNs Example](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#solving-first-order-odes-with-pinns-example)
+[Solving second order ODEs with PINNs Example](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#solving-second-order-odes-with-pinns-example)
 
 # Universal function approximator
 
