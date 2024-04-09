@@ -94,7 +94,14 @@ You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the
 
 Now, in this case, we have $g(x) = 1 + x N(x,\theta)$.
 
-Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is $L = \sum_{i=1}^{n} (g\prime(x_i) - f\prime(x_i))^2$.
+Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is 
+
+\begin{equation}
+L = \sum_{i=1}^{n} (g\prime(x_i) - f\prime(x_i))^2
+\end{equation}
+
+where $x_i$ is the point in the interval $[a,b]$.
+
 Basically, we don't get what we want, so we need to set a tolerance for the loss function. If the loss function is smaller than the tolerance, we stop training the neural network.
 
 $g\prime(x) = N(x,\theta) + x N\prime(x,\theta)$
