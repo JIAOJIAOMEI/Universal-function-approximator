@@ -1,4 +1,8 @@
-[TOC]
+[Universal function approximator]: # Universal-function-approximator
+[Fourier feature mapping]: # Fourier-feature-mapping
+[Different optimizers]: # Different-optimizers
+[Solving first order ODEs with PINNs Example]: #Solving-first-order-ODEs-with-PINNs-Example
+[Solving second order ODEs with PINNs Example]: #Solving-second-order-ODEs-with-PINNs-Example
 
 # Universal function approximator
 
