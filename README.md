@@ -1,3 +1,5 @@
+# Table of Contents
+
 [Universal function approximator](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs?tab=readme-ov-file#universal-function-approximator)
 
 
