@@ -82,12 +82,13 @@ optimiser_name_list = ['SGD', 'Adam', 'Ada-grad', 'Ada-delta', 'AdamW', 'Adam', 
 rows = len(activationFn_list)
 cols = len(optimiser_list)
 
+num_samples_test = 2*num_samples
 fig, axs = plt.subplots(rows, cols, figsize=(80, 50))
 for i, activationFn in enumerate(activationFn_list):
     for j, optimiser in enumerate(optimiser_list):
         optimiser = optimiser(network.parameters(), lr=learning_rate)
         costList = train(network, loader, lossFn, optimiser, numEpochs, activationFn)
-        x = torch.linspace(x_range[0], x_range[1], num_samples).view(-1, 1)
+        x = torch.linspace(x_range[0], x_range[1], num_samples_test).view(-1, 1)
         y_Exact = my_underlying_function(x)
         y_Out = network.forward(x, activationFn).detach().numpy()
         x = x.detach().numpy()

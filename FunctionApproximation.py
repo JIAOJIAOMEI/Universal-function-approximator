@@ -71,11 +71,12 @@ numEpochs_list = [2000, 4000, 8000, 16000, 32000]
 rows = len(activationFn_list)
 cols = len(numEpochs_list)
 
+num_samples_test = 2*num_samples
 fig, axs = plt.subplots(rows, cols, figsize=(50, 50))
 for i, activationFn in enumerate(activationFn_list):
     for j, numEpochs in enumerate(numEpochs_list):
         costList = train(network, loader, lossFn, optimiser, numEpochs, activationFn)
-        x = torch.linspace(x_range[0], x_range[1], num_samples).view(-1, 1)
+        x = torch.linspace(x_range[0], x_range[1], num_samples_test).view(-1, 1)
         y_Exact = my_underlying_function(x)
         y_Out = network.forward(x, activationFn).detach().numpy()
         x = x.detach().numpy()
@@ -84,4 +85,5 @@ for i, activationFn in enumerate(activationFn_list):
         axs[i, j].set_title(f'{activationFn.__name__} Activation Function, {numEpochs} Epochs', fontsize=16)
         axs[i, j].legend(loc='upper left', fontsize=13)
 plt.savefig('FunctionApproximation.png', dpi=300, bbox_inches='tight', pad_inches=0.1)
+plt.savefig('FunctionApproximation.pdf', dpi=300, bbox_inches='tight', pad_inches=0.1)
 plt.show()

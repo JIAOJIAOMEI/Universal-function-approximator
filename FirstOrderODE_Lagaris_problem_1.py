@@ -132,10 +132,11 @@ activationFn_list = [torch.tanh, torch.relu, torch.sigmoid, torch.nn.functional.
 rows = len(activationFn_list)
 cols = 2
 
+num_samples_test = 2 * num_samples
 fig, axs = plt.subplots(rows, cols, figsize=(50, 50))
 for i, activationFn in enumerate(activationFn_list):
     cost_List = train(network, loader, lossFn, optimiser_network, num_epochs, activationFn)
-    x = torch.linspace(x_range[0], x_range[1], num_samples).view(-1, 1)
+    x = torch.linspace(x_range[0], x_range[1], num_samples_test).view(-1, 1)
     y_Exact = solution_to_Lagaris_problem_1(x).detach().numpy()
     y_Out = network.forward(x, activationFn).detach().numpy()
     x = x.detach().numpy()
@@ -146,7 +147,7 @@ for i, activationFn in enumerate(activationFn_list):
     axs[i, 0].legend()
 
     cost_List = train(Fourier_network, loader, lossFn, optimiser_Fourier_network, num_epochs, activationFn)
-    x = torch.linspace(x_range[0], x_range[1], num_samples).view(-1, 1)
+    x = torch.linspace(x_range[0], x_range[1], num_samples_test).view(-1, 1)
     y_Exact = solution_to_Lagaris_problem_1(x).detach().numpy()
     y_Out = Fourier_network.forward(x, activationFn).detach().numpy()
     x = x.detach().numpy()
