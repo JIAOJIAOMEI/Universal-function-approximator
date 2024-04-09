@@ -1,4 +1,9 @@
+[TOC]
+
+
+
 # Universal function approximator
+
 Neural networks are universal function approximators. 
 Given enough neurons and layers, a neural network can approximate **any** function.
 (I don't really believe this, but I agree that neural networks are very powerful function approximators.)
@@ -59,7 +64,7 @@ class Fitter(torch.nn.Module):
 
 ![Optimiser_Compare.png](Optimiser_Compare.png)
 
-# Solving ODEs with PINNs Example
+# Solving first order ODEs with PINNs Example
 
 The idea is based on this paper [Artificial Neural Networks for Solving ODEs and PDES](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/1998-Artificial%20Neural%20Networks%20for%20Solving%20ODEs%20and%20PDES.pdf),
 the code implementation is based on this [Neural Networks for Solving Differential Equations](https://github.com/JIAOJIAOMEI/Universal-function-approximator-and-PINNs/blob/main/main%20reference%20for%20this%20project.pdf), I made some modifications.
@@ -119,3 +124,6 @@ $$
 I think that is all.
 
 One more thing,the final output is not the output of the neural network, but the output of $g(x) = f(a) + (x-a) N(x,\theta) $.
+
+# Solving second order ODEs with PINNs Example
+
