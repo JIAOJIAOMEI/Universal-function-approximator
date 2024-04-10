@@ -53,8 +53,8 @@ if you want more details, you can read the paper [Fourier Features Let Networks 
 
 ```python
 
-def fourier_feature_mappping_function(x):
-    return torch.cat([torch.sin(x), torch.cos(x)], dim=1)
+def fourier_feature_mappping_functioN(x; \theta):
+    return torch.cat([torch.siN(x; \theta), torch.cos(x)], dim=1)
 
 
 class Fitter(torch.nn.Module):
@@ -65,7 +65,7 @@ class Fitter(torch.nn.Module):
         self.fully_connected_2 = torch.nn.Linear(in_features=numHiddenNodes, out_features=1)
 
     def forward(self, x, activation_Function):
-        first_layer_output = self.fully_connected_1(fourier_feature_mappping_function(x))
+        first_layer_output = self.fully_connected_1(fourier_feature_mappping_functioN(x; \theta))
         first_layer_output = activation_Function(first_layer_output)
         y = self.fully_connected_2(first_layer_output)
         return y
@@ -109,43 +109,43 @@ I compared normal networks and fourier networks, the results are shown below.
 
 I will explain the idea; it is very, very simple.
 
-You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g(x) = f(a) + (x-a) N(x)$ to approximate $f(x)$, where $N(x)$ is the neural network. It would be easier to understand why $g(x) = f(a) + (x-a) N(x)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial or taylor series.
+You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta)$ to approximate $f(x)$, where $N(x; \theta)$ is the neural network. It would be easier to understand why $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial or taylor series.
 
-Now, in this case, we have $g(x) = 1 + x N(x)$.
+Now, in this case, we have $g\prime(x; \theta) = 1 + x N(x; \theta)$.
 
-Since we are using $g(x)$ to approximate $f(x)$, it means that we want $g\prime(x) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
+Since we are using $g\prime(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime(x; \theta) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
 
 $$
-L = \sum_{i=1}^{n} (g\prime(x_i) - f\prime(x_i))^2
+L (\theta)= \sum_{i=1}^{n} (g\prime(x_i; \theta) - f\prime(x_i))^2
 $$
 
 where $x_i$ is the point in the interval $[a,b]$.
 
 Basically, we don't get what we want, so we need to set a tolerance for the loss function. If the loss function is smaller than the tolerance, we stop training the neural network.
 
-In our case, $g\prime(x) = N(x) + x N\prime(x)$
+In our case, $g\prime(x; \theta) = N(x; \theta) + x N\prime(x; \theta)$
 
 so the loss function is
 
 $$
-L = \sum_{i=1}^{n} (N(x_i) + x_i N\prime(x_i) - f\prime(x_i))^2
+L (\theta)= \sum_{i=1}^{n} (N(x_i) + x_i N\prime(x_i) - f\prime(x_i))^2
 $$
 
 I think that is all.
 
-One more thing,the final output is not the output of the neural network, but the output of $g(x) = f(a) + (x-a) N(x) $.
+One more thing,the final output is not the output of the neural network, but the output of $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta) $.
 
 # Solving second order ODEs with PINNs Example
 
 Similarly, you want to find out $f(x)$, but you only have $f\prime\prime(x)$ and boundary conditions $f(a) = A$ and $f\prime(a) = A\prime$ and the interval $[a,b]$. We can use
 
 $$
-g(x) = A + A\prime (x-a) + (x-a)^2 N(x)
+g\prime(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)
 $$
 
-to approximate $f(x)$, where $N(x)$ is the neural network.
+to approximate $f(x)$, where $N(x; \theta)$ is the neural network.
 
-**Can't you see it ? $g(x) = A + A\prime (x-a) + (x-a)^2 N(x)$ is the first 2 terms of the taylor series of $f(x)$ at $x=a$.**
+**Can't you see it ? $g\prime(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)$ is the first 2 terms of the taylor series of $f(x)$ at $x=a$.**
 
 The Taylor series of a real or complex-valued function $f(x)$, that is infinitely differentiable at a real or complex number $a$, is the power series
 
@@ -155,10 +155,10 @@ $$
 
 where $f^{(n)}(a)$ denotes the $n$-th derivative of $f$ evaluated at the point $a$, and $n!$ denotes the factorial of $n$.
 
-Since we use $g(x)$ to approximate $f(x)$, it means that we want $g\prime\prime(x) - f\prime\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
+Since we use $g\prime(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime\prime(x; \theta) - f\prime\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
 
 $$
-L = \sum_{i=1}^{n} (g\prime\prime(x_i) - f\prime\prime(x_i))^2
+L (\theta)= \sum_{i=1}^{n} (g\prime\prime(x_i) - f\prime\prime(x_i))^2
 $$
 
 where $x_i$ is the point in the interval $[a,b]$.
@@ -166,11 +166,11 @@ where $x_i$ is the point in the interval $[a,b]$.
 we have 
 
 $$
-g\prime(x) = A\prime + 2 (x-a) N(x) + (x-a)^2 N\prime(x)
+g\prime(x; \theta) = A\prime + 2 (x-a) N(x; \theta) + (x-a)^2 N\prime(x; \theta)
 $$
 
 $$
-g\prime\prime(x) = 2 N(x) + 4 (x-a) N\prime(x) + (x-a)^2 N\prime\prime(x)
+g\prime\prime(x; \theta) = 2 N(x; \theta) + 4 (x-a) N\prime(x; \theta) + (x-a)^2 N\prime\prime(x; \theta)
 $$
 
 I think this is all for this case.
@@ -178,21 +178,21 @@ I think this is all for this case.
 In another case, we have different boundary conditions, suppose that we have $f(a) = A$ and $f(b) = B$ and the interval $[a,b]$. We can use
 
 $$
-g(x) = A \frac{b-x}{b-a} + B \frac{x-a}{b-a} + (x-a)(b-x) N(x)
+g\prime(x; \theta) = A \frac{b-x}{b-a} + B \frac{x-a}{b-a} + (x-a)(b-x) N(x; \theta)
 $$
 
-to approximate $f(x)$, where $N(x)$ is the neural network. It makes sure that when $x=a$, $g(x) = A$ and when $x=b$, $g(x) = B$.
+to approximate $f(x)$, where $N(x; \theta)$ is the neural network. It makes sure that when $x=a$, $g\prime(x; \theta) = A$ and when $x=b$, $g\prime(x; \theta) = B$.
 
-The derivative of $g(x)$ is more complicated, but the idea is the same. In this case, first derivative is
+The derivative of $g\prime(x; \theta)$ is more complicated, but the idea is the same. In this case, first derivative is
 
 $$
-g\prime(x) = \frac{B-A}{b-a} + (a+b-2x) N(x) + (x-a)(b-x) N\prime(x)
+g\prime(x; \theta) = \frac{B-A}{b-a} + (a+b-2x) N(x; \theta) + (x-a)(b-x) N\prime(x; \theta)
 $$
 
 and the second derivative is
 
 $$
-g\prime\prime(x) = -2 N(x) + 2 (a+b-2x) N\prime(x) + (x-a)(b-x) N\prime\prime(x)
+g\prime\prime(x; \theta) = -2 N(x; \theta) + 2 (a+b-2x) N\prime(x; \theta) + (x-a)(b-x) N\prime\prime(x; \theta)
 $$
 
 that is all.
@@ -203,12 +203,12 @@ $$
 f^{\prime \prime}(x) = -\frac{1}{5} f\prime(x) - f(x) - \frac{1}{5} e^{-\frac{x}{5}} \cos(x)
 $$
 
-with exact solution $f(x) = e^{-\frac{x}{5}} \sin(x)$, $x \in [0, 10]$, $f(0) = 0$, $f\prime(0) = 1$.
+with exact solution $f(x) = e^{-\frac{x}{5}} \siN(x; \theta)$, $x \in [0, 10]$, $f(0) = 0$, $f\prime(0) = 1$.
 
 ![SecondOrderODE_Lagaris_problem_3.png](SecondOrderODE_Lagaris_problem_3.png)
 
 **Activation functions are used to add non-linearity to the neural network.** 
-You can think neural network as a black box, f(x) = NN(x), where NN is the neural network.
+You can think neural network as a black box, f(x) = NN(x; \theta), where NN is the neural network.
 Since this world is not linear, or many tasks are not linear, we need to add non-linearity to the neural network so that 
 it can approximate more complex functions.
 But speaking of non-linearity, there are thousands of non-linear functions with different non-linearity, the activation functions such as ReLU, Sigmoid, Tanh, etc. are just a tiny part of them.
