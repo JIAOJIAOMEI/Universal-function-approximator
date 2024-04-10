@@ -109,11 +109,11 @@ I compared normal networks and fourier networks, the results are shown below.
 
 I will explain the idea; it is very, very simple.
 
-You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta)$ to approximate $f(x)$, where $N(x; \theta)$ is the neural network. It would be easier to understand why $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial or taylor series.
+You want to find out the function $f(x)$, but you only have $f\prime(x)$ and the initial condition $f(a) = A$ and the interval $[a,b]$. It is natural to use $g(x; \theta) = f(a) + (x-a) N(x; \theta)$ to approximate $f(x)$, where $N(x; \theta)$ is the neural network. It would be easier to understand why $g(x; \theta) = f(a) + (x-a) N(x; \theta)$ can approximate $f(x)$ if you know the interpolation method by using the Lagrange polynomial or taylor series.
 
-Now, in this case, we have $g\prime(x; \theta) = 1 + x N(x; \theta)$.
+Now, in this case, we have $g (x; \theta) = 1 + x N(x; \theta)$.
 
-Since we are using $g\prime(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime(x; \theta) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
+Since we are using $g(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime(x; \theta) - f\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
 
 $$
 L (\theta)= \sum_{i=1}^{n} (g\prime(x_i; \theta) - f\prime(x_i))^2
@@ -133,19 +133,19 @@ $$
 
 I think that is all.
 
-One more thing,the final output is not the output of the neural network, but the output of $g\prime(x; \theta) = f(a) + (x-a) N(x; \theta) $.
+One more thing,the final output is not the output of the neural network, but the output of $g(x; \theta) = f(a) + (x-a) N(x; \theta) $.
 
 # Solving second order ODEs with PINNs Example
 
 Similarly, you want to find out $f(x)$, but you only have $f\prime\prime(x)$ and boundary conditions $f(a) = A$ and $f\prime(a) = A\prime$ and the interval $[a,b]$. We can use
 
 $$
-g\prime(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)
+g(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)
 $$
 
 to approximate $f(x)$, where $N(x; \theta)$ is the neural network.
 
-**Can't you see it ? $g\prime(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)$ is the first 2 terms of the taylor series of $f(x)$ at $x=a$.**
+**Can't you see it ? $g(x; \theta) = A + A\prime (x-a) + (x-a)^2 N(x; \theta)$ is the first 2 terms of the taylor series of $f(x)$ at $x=a$.**
 
 The Taylor series of a real or complex-valued function $f(x)$, that is infinitely differentiable at a real or complex number $a$, is the power series
 
@@ -155,10 +155,10 @@ $$
 
 where $f^{(n)}(a)$ denotes the $n$-th derivative of $f$ evaluated at the point $a$, and $n!$ denotes the factorial of $n$.
 
-Since we use $g\prime(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime\prime(x; \theta) - f\prime\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
+Since we use $g(x; \theta)$ to approximate $f(x)$, it means that we want $g\prime\prime(x; \theta) - f\prime\prime(x) = 0$ for all $x \in [a,b]$. Hence, the loss function is
 
 $$
-L (\theta)= \sum_{i=1}^{n} (g\prime\prime(x_i) - f\prime\prime(x_i))^2
+L (\theta)= \sum_{i=1}^{n} (g\prime\prime(x_i; \theta) - f\prime\prime(x_i))^2
 $$
 
 where $x_i$ is the point in the interval $[a,b]$.
@@ -203,7 +203,7 @@ $$
 f^{\prime \prime}(x) = -\frac{1}{5} f\prime(x) - f(x) - \frac{1}{5} e^{-\frac{x}{5}} \cos(x)
 $$
 
-with exact solution $f(x) = e^{-\frac{x}{5}} \siN(x; \theta)$, $x \in [0, 10]$, $f(0) = 0$, $f\prime(0) = 1$.
+with exact solution $f(x) = e^{-\frac{x}{5}} \sin(x; \theta)$, $x \in [0, 10]$, $f(0) = 0$, $f\prime(0) = 1$.
 
 ![SecondOrderODE_Lagaris_problem_3.png](SecondOrderODE_Lagaris_problem_3.png)
 
