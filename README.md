@@ -74,6 +74,10 @@ class Fitter(torch.nn.Module):
 
 # Different optimizers
 
+Neural networks are trained by optimizers. These optimizers are used to minimize the loss function.
+They are all based on gradient descent, but they have different ways to update the weights.
+There is a common choice for the optimizer, which is Adam. If you don't know which optimizer to choose, then Adam.
+
 ![Optimiser_Compare.png](Optimiser_Compare.png)
 
 # Solving first order ODEs with PINNs Example
