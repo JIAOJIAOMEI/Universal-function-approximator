@@ -212,4 +212,4 @@ You can think neural network as a black box, f(x) = NN(x), where NN is the neura
 Since this world is not linear, or many tasks are not linear, we need to add non-linearity to the neural network so that 
 it can approximate more complex functions.
 But speaking of non-linearity, there are thousands of non-linear functions with different non-linearity, the activation functions such as ReLU, Sigmoid, Tanh, etc. are just a tiny part of them.
-This is why I don't think neural networks can approximate any function, the ability is somehow limited by the activation functions. Because the non-linearity of neural networks is limited by the activation functions, the neural network can only approximate a certain range of functions, just a personal opinion.
+This is why I don't think neural networks can approximate any function; the ability of neural network is somehow limited by the activation functions. Because the non-linearity of neural networks is limited by the activation functions, the neural network can only approximate a certain range of functions, just a personal opinion.
