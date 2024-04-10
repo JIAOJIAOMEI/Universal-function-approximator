@@ -128,7 +128,7 @@ In our case, $g\prime(x; \theta) = N(x; \theta) + x N\prime(x; \theta)$
 so the loss function is
 
 $$
-L (\theta)= \sum_{i=1}^{n} (N(x_i) + x_i N\prime(x_i) - f\prime(x_i))^2
+L (\theta)= \sum_{i=1}^{n} (N(x_i; \theta) + x_i N\prime(x_i; \theta) - f\prime(x_i))^2
 $$
 
 I think that is all.
