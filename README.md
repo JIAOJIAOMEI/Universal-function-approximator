@@ -207,7 +207,7 @@ with exact solution $f(x) = e^{-\frac{x}{5}} \sin(x)$, $x \in [0, 10]$, $f(0) = 
 
 ![SecondOrderODE_Lagaris_problem_3.png](SecondOrderODE_Lagaris_problem_3.png)
 
-**Activation function are used to add non-linearity to the neural network.** 
+**Activation functions are used to add non-linearity to the neural network.** 
 You can think neural network as a black box, f(x) = NN(x), where NN is the neural network.
 Since this world is not linear, or many tasks are not linear, we need to add non-linearity to the neural network so that 
 it can approximate more complex functions.
