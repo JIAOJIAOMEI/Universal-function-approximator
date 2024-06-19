@@ -60,14 +60,14 @@ def final_output(x, n_out):
     """
     x range: [0,2]
     f(0) = 1
-    Trial solution to Lagaris problem 1: f(x) = 1 + xN(x)
+    f(x) = 1 + xN(x)
     """
     return 1 + x * n_out
 
 
 def function_derivative(x, n_out, dndx):
     """
-    Derivative of a trial solution to Lagaris problem 1: f'(x) = N(x) + xN'(x)
+    f'(x) = N(x) + xN'(x)
     """
     return n_out + x * dndx
 

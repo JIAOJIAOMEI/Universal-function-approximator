@@ -1,10 +1,11 @@
 # @Author  : Mei Jiaojiao
 # @Time    : 2024/4/8 13:18
 # @Software: PyCharm
-# @File    : SolveODEs_Lagaris_problem_4.py
+# @File    : SolvePDEs_Lagaris_problem_5.py
 
 
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.utils.data
 from torch.autograd import grad
@@ -12,64 +13,69 @@ from torch.autograd import grad
 
 class DataSet(torch.utils.data.Dataset):
 
-    def __init__(self, xRange, numSamples):
-        self.InputData = torch.linspace(xRange[0], xRange[1], numSamples, requires_grad=True).view(-1, 1)
+    def __init__(self, xRange, yRange, numSamples):
+        X = torch.linspace(xRange[0], xRange[1], numSamples, requires_grad=True)
+        Y = torch.linspace(yRange[0], yRange[1], numSamples, requires_grad=True)
+        grid = torch.meshgrid(X, Y)
+        self.InputData = torch.cat([grid[0].reshape(-1, 1), grid[1].reshape(-1, 1)], dim=1)
 
     def __len__(self):
-        return len(self.InputData)
+        return self.InputData.shape[0]
 
     def __getitem__(self, idx):
         return self.InputData[idx]
 
 
-class ODESolver(torch.nn.Module):
+class PDESolver(torch.nn.Module):
 
     def __init__(self, numHiddenNodes):
-        super(ODESolver, self).__init__()
-        self.fully_connected_1 = torch.nn.Linear(in_features=1, out_features=numHiddenNodes)
-        self.fully_connected_2 = torch.nn.Linear(in_features=numHiddenNodes, out_features=2)
+        super(PDESolver, self).__init__()
+        self.fully_connected_1 = torch.nn.Linear(in_features=2, out_features=numHiddenNodes)
+        self.fully_connected_2 = torch.nn.Linear(in_features=numHiddenNodes, out_features=50)
+        self.fully_connected_3 = torch.nn.Linear(in_features=50, out_features=1)
 
     def forward(self, x, activation_Function):
         first_layer_output = self.fully_connected_1(x)
         first_layer_output = activation_Function(first_layer_output)
-        y = self.fully_connected_2(first_layer_output)
+        second_layer_output = self.fully_connected_2(first_layer_output)
+        second_layer_output = activation_Function(second_layer_output)
+        y = self.fully_connected_3(second_layer_output)
         return y
 
 
-def f1_final_output(x, n1_out):
-    return x * n1_out
+def final_output(x, y, n_out):
+    e_inv = np.exp(-1)
+    first_term = (1 - x) * (y ** 3) + x * (1 + (y ** 3)) * e_inv + (1 - y) * x * (torch.exp(-x) - e_inv) + y * (
+            (1 + x) * torch.exp(-x) - (1 - x + (2 * x * e_inv)))
+    return first_term + x * (1 - x) * y * (1 - y) * n_out
 
 
-def f2_final_output(x, n2_out):
-    return 1 + (x * n2_out)
+def solution(x, y):
+    return torch.exp(-x) * (x + y ** 3)
 
 
-def f1_derivative(x, n1_out, d1ndx):
-    return n1_out + (x * d1ndx)
+def first_partial_derivative_x(x, y, n_out, dndx):
+    return (-torch.exp(-x) * (x + y - 1) - y ** 3 + (y ** 2 + 3) * y * np.exp(-1) + y
+            + y * (1 - y) * ((1 - 2 * x) * n_out + x * (1 - x) * dndx))
 
 
-def f2_derivative(x, n2_out, d2ndx):
-    return n2_out + (x * d2ndx)
+def second_partial_derivative_x(x, y, n_out, dndx, d2ndx2):
+    return (torch.exp(-x) * (x + y - 2) + y * (1 - y) * ((-2 * n_out) + 2 * (1 - 2 * x) * dndx) + x * (1 - x) * d2ndx2)
 
 
-def Lagaris_problem_4_eq1(x, f1_trial, f2_trial, df1_trial):
-    LHS = df1_trial
-    RHS = torch.cos(x) + (f1_trial ** 2 + f2_trial) - (1 + x ** 2 + torch.sin(x) ** 2)
-    return LHS - RHS
+def first_partial_derivative_y(x, y, n_out, dndy):
+    return (3 * x * (y ** 2 + 1) * np.exp(-1) - (x - 1) * (3 * (y ** 2) - 1) + torch.exp(-x)
+            + x * (1 - x) * ((1 - 2 * y) * n_out + y * (1 - y) * dndy))
 
 
-def Lagaris_problem_4_eq2(x, f1_trial, f2_trial, df2_trial):
-    LHS = df2_trial
-    RHS = 2 * x - ((1 + x ** 2) * torch.sin(x)) + (f1_trial * f2_trial)
-    return LHS - RHS
+def second_partial_derivative_y(x, y, n_out, dndy, d2ndy2):
+    return (np.exp(-1) * 6 * y * (-np.exp(1) * x + x + np.exp(1))
+            + x * (1 - x) * ((-2 * n_out) + 2 * (1 - 2 * y) * dndy) + y * (1 - y) * d2ndy2)
 
 
-def solution_to_Lagaris_problem_4_eq1(x):
-    return torch.sin(x)
-
-
-def solution_to_Lagaris_problem_4_eq2(x):
-    return 1 + x ** 2
+def my_loss(x, y, y_2nd_derivative, x_2nd_derivative):
+    RHS = torch.exp(-x) * (x - 2 + y ** 3 + 6 * y)
+    return x_2nd_derivative + y_2nd_derivative - RHS
 
 
 def train(neural_network, data_loader, loss_function, optimiser, num_Epochs, activationFn):
@@ -78,78 +84,74 @@ def train(neural_network, data_loader, loss_function, optimiser, num_Epochs, act
     for epoch in range(num_Epochs):
         for batch in data_loader:
             n_out = neural_network.forward(batch, activationFn)
-            n1_out, n2_out = torch.split(n_out, split_size_or_sections=1, dim=1)
-            # Get df1 / dx
-            dn1_dx = grad(n1_out, batch, torch.ones_like(n1_out), retain_graph=True, create_graph=True)[0]
-            # Get df2 / dx
-            dn2_dx = grad(n2_out, batch, torch.ones_like(n2_out), retain_graph=True, create_graph=True)[0]
+            dn_out = grad(n_out, batch, torch.ones_like(n_out), retain_graph=True, create_graph=True)[0]
+            dn2_out = grad(dn_out, batch, torch.ones_like(dn_out), retain_graph=True, create_graph=True)[0]
 
-            # Get value of trial solution f1(x)
-            f1_trial = f1_final_output(batch, n1_out)
-            # Get df1 / dx
-            df1_trial = f1_derivative(batch, n1_out, dn1_dx)
+            # get the first partial derivative of a trial solution
+            dndx, dndy = torch.split(dn_out, split_size_or_sections=1, dim=1)
+            # get second partial derivative of trial solution
+            d2ndx2, d2ndy2 = torch.split(dn2_out, split_size_or_sections=1, dim=1)
 
-            # Get value of trial solution f2(x)
-            f2_trial = f2_final_output(batch, n2_out)
-            # Get df2 / dx
-            df2_trial = f2_derivative(batch, n2_out, dn2_dx)
+            x, y = torch.split(batch, split_size_or_sections=1, dim=1)
 
-            # Get LHS of differential equation D(x) = 0
-            diff_eq1 = Lagaris_problem_4_eq1(batch, f1_trial, f2_trial, df1_trial)
-            diff_eq2 = Lagaris_problem_4_eq2(batch, f1_trial, f2_trial, df2_trial)
+            x_2nd_derivative = second_partial_derivative_x(x, y, n_out, dndx, d2ndx2)
+            y_2nd_derivative = second_partial_derivative_y(x, y, n_out, dndy, d2ndy2)
 
-            cost = loss_function(diff_eq1, torch.zeros_like(diff_eq1)) + loss_function(diff_eq2, torch.zeros_like(diff_eq2))
+            loss = my_loss(x, y, y_2nd_derivative, x_2nd_derivative)
 
-            cost.backward()  # perform backpropagation
-            optimiser.step()  # perform parameter optimisation
-            optimiser.zero_grad()  # reset gradients to zero
+            cost = loss_function(loss, torch.zeros_like(loss))
 
-        cost_list.append(cost.detach().numpy())  # store cost of each epoch
-    neural_network.train(False)  # set module out of training mode
+            optimiser.zero_grad()
+            cost.backward()
+            optimiser.step()
+
+        cost_list.append(cost.detach().numpy())
+    neural_network.train(False)
     return cost_list
 
 
-x_range = [0, 3]
-num_samples = 100
+x_range = [0, 1]
+y_range = [0, 1]
+
+network = PDESolver(numHiddenNodes=20)
 batch_size = 20
-learning_rate = 1e-3
-num_hidden_nodes = 20
 
-network = ODESolver(numHiddenNodes=num_hidden_nodes)
-
-train_set = DataSet(xRange=x_range, numSamples=num_samples)
-loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True)
 lossFn = torch.nn.MSELoss()
+optimiser_network = torch.optim.Adam(network.parameters(), lr=1e-3)
+activationFn = torch.nn.Tanh()
 
-optimiser_network = torch.optim.Adam(network.parameters(), lr=learning_rate)
-
-activationFn_list = [torch.tanh, torch.relu, torch.sigmoid, torch.nn.functional.leaky_relu, torch.nn.functional.elu,
-                     torch.nn.functional.hardswish]
+num_samples_list = [5, 20, 40]
 num_epochs_list = [100, 500, 1000]
 
-rows = len(activationFn_list)
+rows = len(num_samples_list)
 cols = len(num_epochs_list)
 
-num_samples_test = 2 * num_samples
-fig, axs = plt.subplots(rows, cols, figsize=(50, 50))
-for i, activationFn in enumerate(activationFn_list):
+num_samples_test = np.random.randint(5, 10)
+plt.figure(figsize=(20, 20))
+for i, num_samples in enumerate(num_samples_list):
     for j, num_epochs in enumerate(num_epochs_list):
+        train_set = DataSet(xRange=x_range, yRange=y_range, numSamples=num_samples)
+        loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=batch_size, shuffle=True)
         cost_List = train(network, loader, lossFn, optimiser_network, num_epochs, activationFn)
-        x = torch.linspace(x_range[0], x_range[1], num_samples_test).view(-1, 1)
-        y1_Exact = solution_to_Lagaris_problem_4_eq1(x).detach().numpy()
-        y2_Exact = solution_to_Lagaris_problem_4_eq2(x).detach().numpy()
-        y1_Out, y2_Out = torch.split(network.forward(x, activationFn), split_size_or_sections=1, dim=1)
-        y1_Out = y1_Out.detach().numpy()
-        y2_Out = y2_Out.detach().numpy()
-        x = x.detach().numpy()
+        x = torch.linspace(x_range[0], x_range[1], num_samples_test, requires_grad=True)
+        y = torch.linspace(y_range[0], y_range[1], num_samples_test, requires_grad=True)
+        X, Y = torch.meshgrid(x, y)
+        Input = torch.cat((X.reshape(-1, 1), Y.reshape(-1, 1)), dim=1)
+        n_out = network.forward(Input, activationFn)
+        final_out = final_output(X.reshape(-1, 1), Y.reshape(-1, 1), n_out)
+        final_out = final_out.reshape(num_samples_test, num_samples_test).detach().numpy()
+        y_Exact = solution(X, Y).detach().numpy()
+        # residual error
+        residual_error = np.sqrt((final_out - y_Exact) ** 2).mean()
+        ax = plt.subplot(rows, cols, i * cols + j + 1, projection='3d')
+        ax.plot_surface(X.detach().numpy(), Y.detach().numpy(), final_out, cmap='viridis', label='Predicted')
+        ax.scatter(X.detach().numpy(), Y.detach().numpy(), y_Exact, c='r', label='Exact Solution')
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_zlabel('f(x, y)')
+        ax.set_title('Epochs: ' + str(num_epochs) + ', Residual Error: ' + str(residual_error) + ", Samples: " + str(
+            num_samples))
 
-        axs[i, j].plot(x, y1_Exact, 'r', label='Exact f1(x)')
-        axs[i, j].plot(x, y2_Exact, 'b', label='Exact f2(x)')
-        axs[i, j].plot(x, f1_final_output(x, y1_Out), 'g', label='Approx f1(x)')
-        axs[i, j].plot(x, f2_final_output(x, y2_Out), 'k', label='Approx f2(x)')
-
-        axs[i, j].set_title('Activation Function: ' + activationFn.__name__ + ', Epochs: ' + str(num_epochs))
-        axs[i, j].legend()
-plt.savefig('SolveODEs_Lagaris_problem_4.pdf',dpi=300,bbox_inches='tight',pad_inches=0.1)
-plt.savefig('SolveODEs_Lagaris_problem_4.png',dpi=300,bbox_inches='tight',pad_inches=0.1)
+plt.savefig('SolvePDEs_Lagaris_problem_5.pdf', dpi=300, bbox_inches='tight', pad_inches=0.1)
+plt.savefig('SolvePDEs_Lagaris_problem_5.png', dpi=300, bbox_inches='tight', pad_inches=0.1)
 plt.show()
